@@ -38,14 +38,11 @@ O objetivo deste projeto é implementar um sistema que atenda às necessidades d
 
 Para desenvolver este software, utilizamos a metodologia DDD (Domain-Driven Design). Aplicando esses conceitos, conseguimos nos aprofundar nos requisitos e proporcionar uma experiência agradável e eficiente aos nossos clientes.
 
-# Swagger
-![image](https://github.com/grupo27-6soat-fiap/FoodTech/assets/167378602/555e0c0a-8764-4cc8-b62f-9ff404b92ea3)
-
 ### Link Swagger (Executar após rodar a aplicação no Kubernetes):
 [![Swagger](https://img.shields.io/badge/Swagger-%2380BFFF.svg?style=for-the-badge&logo=swagger&logoColor=white)](http://localhost:30002/swagger-ui/index.html)
 
 ## Domain-driven design
-![image](https://github.com/grupo27-6soat-fiap/FoodTech/assets/167378602/06481679-ca3c-4b1d-a574-80e3fc1adcbc)
+![image](https://github.com/grupo27-6soat-fiap/foodtech/blob/master/driver.png)
 
 # Para acessar a Collection da API Postman clique na imagem:
 [![Postman](https://img.shields.io/badge/Postman-%23FF6C37.svg?style=for-the-badge&logo=postman&logoColor=white)
@@ -55,13 +52,16 @@ Para desenvolver este software, utilizamos a metodologia DDD (Domain-Driven Desi
 [![Miro](https://img.shields.io/badge/Miro-%2300B2A9.svg?style=for-the-badge&logo=miro&logoColor=white)
 ](https://miro.com/app/board/uXjVKStNlQI=/?share_link_id=418037355467)
 
-# Arquiterua Infraestrutura Kubernetes:
+# Arquitetura Infraestrutura Kubernetes:
 Visando atender os requisitos do nosso projeto utilizamos a arquitetura Kubernetes em conjunto com o Docker como provedor de infraestrutura, aproveitando ao máximo os recursos nativos oferecidos pela plataforma. Dentro do cluster Kubernetes, estabelecemos o namespace "food-techchallenge-api" para agrupar todos os recursos diretamente relacionados à nossa aplicação. Além disso, reservamos o namespace "db_techfood" para nosso banco de dados gerenciado internamente pelo Kubernetes. Dentro do namespace "food-techchallenge-api", adotamos uma abordagem de segmentação dos componentes com base em suas responsabilidades específicas, o que facilita a visualização e compreensão da nossa estrutura arquitetônica. Essa prática visa proporcionar uma organização clara e intuitiva dos elementos que compõem a aplicação. Na imagem abaixo ilustramos como está sendo arquitetado o processo e também a comunicação entre eles, onde estamos expondo para a internet na porta 30002 nossa aplicação Java com Springboot e intermante na temos a aplicação MySql sendo executada em um outro pode, para persistir os dados criamos um volume para o banco e toda essa comunicação da aplicação com a base de dados está sendo feita através das services, para provisionar uma escalabilidade ao nosso projeto estamos utilizando o HPA que é responsável por verificar as métricas dos pod's e criar replicas para atender a necessidade de requisições.
 ![image](https://github.com/grupo27-6soat-fiap/foodtech/blob/master/Arquitetura.drawio.png)
 
+# Integração Mercado Pago:
+
+Como premissa do projeto foi necessário a implementação da integração da aplicação com o Mercado Pago. Isso foi realizado, criando uma conta de desenvolvedor e configurando as informações para que fosse possível realizar o Checkout do pedido, acionando o serviço para geração do QrCode de pagamento. 
 
 ## Link Youtube:
-![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=youtube&logoColor=white)
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=youtube&logoColor=white)](LINK YOUTUBE AQUI)
 
 ## Implementação
 Para implantar o projeto, utilizamos o conceito de containers com o Docker como ferramenta de gerenciamento. Nosso projeto usa tanto Dockerfile quanto Docker-compose. Utilizamos uma imagem do Java com Spring e uma imagem do MySQL para rodar o banco de dados localmente e realizar as operações de CRUD da nossa aplicação.
@@ -100,8 +100,6 @@ cd food-techchallenge-api
 # entrar no terminal e executar o seguinte comando
 docker compose up --build
 ```
-
-
 
 # Como rodar usando Kubernetes:
 
