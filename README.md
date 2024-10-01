@@ -64,7 +64,7 @@ Como premissa do projeto foi necessário a implementação da integração da ap
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=youtube&logoColor=white)](LINK YOUTUBE AQUI)
 
 ## Implementação
-Para implantar o projeto, utilizamos o conceito de containers com o Docker como ferramenta de gerenciamento. Nosso projeto usa tanto Dockerfile quanto Docker-compose. Utilizamos uma imagem do Java com Spring e uma imagem do MySQL para rodar o banco de dados localmente e realizar as operações de CRUD da nossa aplicação.
+Para implantar o projeto, utilizamos o conceito de containers com o Docker como ferramenta de gerenciamento. Nosso projeto usa tanto Dockerfile quanto Docker-compose. Utilizamos uma imagem do Java com Spring e uma imagem do Postgres para rodar o banco de dados localmente e realizar as operações de CRUD da nossa aplicação.
 
 # Como executar o projeto
 
@@ -75,13 +75,13 @@ Pré-requisitos: Java 17, JDK 17, Gradle, Postgres.
 
 ```bash
 # clonar repositório
-git clone [https://github.com/grupo27-6soat-fiap/TechFood.git]
+git clone [https://github.com/grupo27-6soat-fiap/foodtech.git]
 
 # entrar na pasta do projeto food-techchallenge-api
-cd food-techchallenge-api
+cd .\foodtech\
 
 # executar o projeto
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 # Como rodar usando Docker Desktop:
 
@@ -92,16 +92,16 @@ cd food-techchallenge-api
 
 ```bash
 # clonar repositório
-git clone [https://github.com/grupo27-6soat-fiap/FoodTech.git]
+git clone [https://github.com/grupo27-6soat-fiap/foodtech.git]
 
 # entrar na pasta do projeto food-techchallenge-api
-cd food-techchallenge-api
+cd .\foodtech\
 
 # entrar no terminal e executar o seguinte comando
 docker compose up --build
 ```
 
-# Como rodar usando Kubernetes:
+# Como rodar usando Kubernetes Local:
 
 ### Após instalar o Docker Desktop, ativar no Docker Desktop a opção do Kubernetes:
 
@@ -114,30 +114,80 @@ docker compose up --build
 ### Após o Kubernetes incializar, seguir os próximos passos:
 
 ### Clonar repositório:
-git clone [https://github.com/grupo27-6soat-fiap/FoodTech.git]
+git clone [https://github.com/grupo27-6soat-fiap/foodtech.git]
 
-### Entrar na pasta do projeto food-techchallenge-api:
-cd food-techchallenge-api
+### Entrar na pasta do projeto foodtech:
+cd .\foodtech\
 ### Abrir o PowerShell ou o terminal do computador
 ### Ordem de execução dos arquivos Yaml:
-1 - Executar os arquivos da pasta food-techchallenge-api/k8s/db:
- - 1.1 - kubectl apply -f ./k8s/db/pvc-db.yaml
- - 1.2 - kubectl apply -f ./k8s/db/configmap-db.yaml
- - 1.3 - kubectl apply -f ./k8s/db/service-db.yaml
- - 1.4 - kubectl apply -f ./k8s/db/deployment-db.yaml
-
+1 - Executar os arquivos da pasta foodtech/k8s:
+ - 1.1 - kubectl apply -f ./k8s/secret-postgress.yml
+ - 1.2 - kubectl apply -f ./k8s/statefulset-postgress.yml
+ - 1.3 - kubectl apply -f ./k8s/service-postgress.yml
+ - 1.4 - kubectl apply -f ./k8s/service-app.yml
+ - 1.5 - kubectl apply -f ./k8s/secret-payment.yml
+ - 1.6 - kubectl apply -f ./k8s/deployment-app.yml
+ - 1.7 - kubectl apply -f ./k8s/hpa.yml
    
-2 - Executar os arquivos da pasta food-techchallenge-api/k8s/backend:
- - 2.1 - kubectl apply -f ./k8s/backend/configmap-api.yaml
- - 2.2 - kubectl apply -f ./k8s/backend/service-api.yaml
- - 2.3 - kubectl apply -f ./k8s/backend/deployment-api.yaml
- - 2.4 - kubectl apply -f ./k8s/backend/components.yaml
- - 2.5 - kubectl apply -f ./k8s/backend/api-hpa.yaml
-   
-3 - Alterar a porta da rota no postman quando o Kubernetes estiver rodando
+2 - Alterar a porta da rota no postman quando o Kubernetes estiver rodando
   - Porta: 30002 (Kubernetes)
   - Porta: 8080 (Local)
 ![image](https://github.com/user-attachments/assets/95f7c9bb-b7bb-4b20-ad6b-60501e4c3905)
+
+
+
+# Como Rodar o Projeto Utilizando o Ambiente AWS
+
+Este guia fornece instruções para configurar o ambiente necessário e executar o projeto Foodtech na AWS, utilizando diversas infraestruturas integradas.
+
+## Repositórios Necessários
+
+1. [foodtech-infra-eks](https://github.com/grupo27-6soat-fiap/foodtech-infra-eks.git)
+2. [foodtech-infra-rds](https://github.com/grupo27-6soat-fiap/foodtech-infra-rds.git)
+3. [foodtech-infra-cognito](https://github.com/grupo27-6soat-fiap/foodtech-infra-cognito.git)
+4. [foodtech-infra-dynamoDB](https://github.com/grupo27-6soat-fiap/foodtech-infra-dynamoDB.git)
+5. [foodtech-lambda](https://github.com/grupo27-6soat-fiap/foodtech-lambda.git)
+6. [foodtech](https://github.com/grupo27-6soat-fiap/foodtech.git)
+
+## Ordem de Execução dos Workflows Terraform
+
+A seguir estão os passos para executar os workflows Terraform, que provisionam toda a infraestrutura necessária:
+
+### Passo 1 - foodtech-infra-eks
+- Executar o workflow para provisionar o cluster EKS que será utilizado pela aplicação.
+
+### Passo 2 - foodtech-infra-dynamoDB
+- Executar o workflow para provisionar a base de dados no DynamoDB.
+
+### Passo 3 - foodtech-infra-cognito
+- Executar o workflow para provisionar o serviço Cognito que gerenciará a autenticação.
+
+### Passo 4 - foodtech-infra-rds
+- Executar o workflow para provisionar o banco de dados RDS.
+
+### Passo 5 - foodtech-lambda (criação do API Gateway incluída)
+- Executar o workflow para provisionar a Lambda e configurar o API Gateway.
+- **Atenção**: Para o workflow da Lambda, é necessário que as seguintes secrets sejam criadas/atualizadas no GitHub Actions:
+  - `CLIENT_ID_COGNITO`: client ID da AppIntegration do Cognito.
+  - `PASSWORD_COGNITO`: senha do usuário que foi criado no Cognito.
+  - `USERNAME_COGNITO`: nome do usuário criado no Cognito.
+
+### Passo 6 - foodtech
+- Executar o workflow para rodar a aplicação no cluster EKS provisionado.
+- **Atenção**: Para a aplicação rodar corretamente na AWS, é necessário que as seguintes secrets sejam criadas/atualizadas no GitHub Actions:
+  - `RDS_HOSTNAME`: endpoint do banco de dados RDS (ex: `rds-foodtech.c5o24sqc6d2p.us-east-1.rds.amazonaws.com`).
+  - `REPO_NAME`: nome do repositório no ECR (ex: `foodtech`).
+  - **Atualização no Projeto**:
+    - Arquivo `.oodtech\k8s\secret-postgress.yml`:
+      - Atualizar a seção `data` com os seguintes campos:
+        - `username`: usuário criado no RDS (padrão: `dbadmin`, codificado em Base64 - `ZGJhZG1pbg==`).
+        - `password`: senha criada no RDS (a senha padrão é gerada automaticamente, necessário obter no console da AWS: RDS -> Databases -> `rds-foodtech` -> Configuration -> Manage in Secrets Manager).
+
+
+
+
+
+
 
 ## Linguagem Ubíqua
  ```bash
